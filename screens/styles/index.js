@@ -118,7 +118,7 @@ export default styles = StyleSheet.create({
     },
     borderTop: {
         borderTopColor: '#0d3506', borderTopWidth: 1
-    },
+    }, 
     tableText: {
         textAlign: 'center', 
         fontSize: 12,
@@ -126,5 +126,8 @@ export default styles = StyleSheet.create({
     table: {
         borderWidth: 1, borderColor: '#0d3506',
         marginTop: 8
+    },
+    recordText: {
+        textAlign: 'center',  
     }
 })

@@ -186,6 +186,7 @@ export default function SignUpScreen({navigation}) {
 
   return (
     <> 
+      <StatusBar animated translucent style="auto" />
       <SafeAreaView >
         <ScrollView contentContainerStyle={[{paddingVertical: 75}]}>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

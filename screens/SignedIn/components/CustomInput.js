@@ -16,7 +16,7 @@ export default function CustomInput({
             labelStyle={styles.labelStyle}
             value={value}
             inputContainerStyle={{borderBottomWidth: 0}}
-            inputStyle={styles.input}
+            inputStyle={[styles.input, customStyles]}
             style={{borderWidth: 0}}
             containerStyle={[{width: 'auto'}, styles.inputContainer]}
             disabled={disabled}

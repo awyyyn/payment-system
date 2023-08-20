@@ -7,6 +7,7 @@ import { ScrollView, TouchableHighlight, TouchableOpacity } from 'react-native-g
 import { useEffect, useContext } from 'react'
 import { UserContext } from '../../contexts/ProviderContext';
 import supabase from '../../lib/supabaseConfig';
+import { StatusBar } from 'expo-status-bar';
 
  
 
@@ -19,33 +20,35 @@ function Dashboard ({navigation}){
   useEffect(() => {
     const setDataInContext = async() => {
 
-      const { data } = await supabase.from("clients_table")
-        .select().eq('email', `${user.user.emailAddresses[0].emailAddress}`).single()
+      const { data, error } = await supabase.from("clients_table")
+        .select().eq('email', `${user?.user?.emailAddresses[0]?.emailAddress}`).single()
  
+      console.log(data)
+
+      if(error) console.log(error)
 
       setUser((prev) => ({
-        ...prev,
-        email: data.email,
-        firstName: data.first_name,
-        lastName: data.last_name,
-        phoneNumber: data.contact,
-        address: data.address,
-        imageUrl: user.user.imageUrl,
+        ...prev, 
+        id: data?.uuid,
+        email: data?.email,
+        firstName: data?.first_name,
+        lastName: data?.last_name,
+        phoneNumber: data?.contact,
+        address: data?.address,
+        imageUrl: user?.user.imageUrl,
+        created_at: data?.created_at
       }))
     }
     setDataInContext()
-
-    console.log("HELLO WORLD")
-    
-
-  }, [])
-
  
-
+  }, []);
+ 
+ 
   if(!isLoaded) return <Text>LOADING...</Text>
    
   return (  
     <ScrollView contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 10}}>
+      <StatusBar backgroundColor='#ffde59' />
       <View style={styles.mission}>
         <Text style={[ styles.minWidth, styles.title]}> Mission</Text>
         <Text style={[styles.uppercase, styles.paragraph]}> 

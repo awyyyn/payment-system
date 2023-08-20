@@ -14,16 +14,17 @@ export default function Profile() {
 
     return (
         <ScrollView contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 10}}>
-            <StatusBar backgroundColor='#ffde59' />
             <View style={{alignItems: 'center'}}> 
                 <Image source={{uri: user.imageUrl}} style={{width: 150, height: 150, borderRadius: 100}} alt='Profile Image' />
                 <View style={{ minWidth: 280, marginTop: 40, rowGap: 20 }}> 
-                    <Input
+                    <Input  
+                        customStyles={{textTransform: 'capitalize'}}
                         value={`${user.firstName} ${user.lastName}`}
                         label="Client Name"
                         disabled={true}
                     />
                     <Input
+                        customStyles={{textTransform: 'capitalize'}}
                         value={`${user.address}`}
                         label="Address"
                         disabled={true}

@@ -6,14 +6,10 @@ import styles from '../styles'
 export default function Logout() {
 
     const { signOut } = useAuth()
- 
-    useEffect(() => {
-
-        setTimeout(() => {
-            signOut();
-        }, 1000)
-
-    }, [])
+  
+    setTimeout(() => {
+        signOut();
+    }, 1000)  
     
 
     return (

@@ -1,6 +1,6 @@
-import { createRef, forwardRef, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { TouchableOpacity, View, StyleSheet, Keyboard } from "react-native";
-import { useSignIn } from "@clerk/clerk-expo";
+import { useAuth, useSignIn } from "@clerk/clerk-expo";
 import { Image, Text, Input, Icon } from '@rneui/themed' 
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "../styles/index";
@@ -13,6 +13,14 @@ export default function SignInScreen({navigation}) {
 
   
   const { signIn, setActive, isLoaded } = useSignIn();
+  const { isSignedIn } = useAuth();
+
+  useEffect(() => {
+    async function isSignedInFn () { 
+      if(isSignedIn) 
+      return await setActive({ session: completeSignIn.createdSessionId }); 
+    }
+  }, [])
    
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
@@ -61,12 +69,11 @@ export default function SignInScreen({navigation}) {
 
     setIsLoading(false)
   };
-
-  console.log(emailAddress, password, emailErr)
+ 
 
   return (
     <>
-      {/* <StatusBar  /> */}
+      <StatusBar animated translucent style="auto" />
       <SafeAreaView>
         <TouchableWithoutFeedback  onPress={() => Keyboard.dismiss()}>
           <View style={[styles.signedOutContainer, styles.bgYellow]}> 

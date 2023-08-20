@@ -10,7 +10,7 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { createStackNavigator } from '@react-navigation/stack';
 import Dashboard from './screens/SignedIn/Dashboard';
-import About from './screens/SignedIn/About';
+import Inbox from './screens/SignedIn/Inbox';
 import Context, { UserContext } from './contexts/ProviderContext' 
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Button, ButtonGroup, Dialog, Image } from "@rneui/themed";
@@ -19,6 +19,8 @@ import Profile from "./screens/SignedIn/Profile";
 import Payment from "./screens/SignedIn/Payment";
 import Balance from "./screens/SignedIn/Balance";
 import Logout from "./screens/SignedIn/Logout";
+import { LoadingSpinner } from "./screens/SignedIn/components";
+import { Skeleton } from "@rneui/themed";
 
 
 
@@ -61,8 +63,8 @@ export default function App() {
       <Context>
         <NavigationContainer>
           <ClerkLoading>
-            <View style={styles.loadingUI}>
-              <Text>HELLO WORLD</Text>
+            <View style={styles.loadingUI}> 
+              <LoadingSpinner />
             </View>
           </ClerkLoading>
           <ClerkLoaded>
@@ -86,15 +88,11 @@ export default function App() {
     </ClerkProvider>
   );
 }
-
-
-
-
-
-
-
+ 
 const DrawerNavigation = () => { 
+
   const { user } = React.useContext(UserContext); 
+  
   return (
     <Drawer.Navigator initialRouteName="Home" 
       detachInactiveScreens
@@ -107,15 +105,15 @@ const DrawerNavigation = () => {
         headerRight: () => (
           <TouchableOpacity>
             <Image 
-              source={{uri: user.imageUrl ? user.imageUrl : "https://i.imgur.com/666666" }}  
+              source={{uri: user.imageUrl ? user.imageUrl : 'https://png.pngtree.com/png-clipart/20210915/ourmid/pngtree-user-avatar-placeholder-white-blue-png-image_3918443.jpg'  }}  
               style={{height: 35, width: 35, borderRadius: 100, marginRight: 10}}  
             />
           </TouchableOpacity>
-        )
+        ), 
       }}
     >
       <Drawer.Screen name="Dashboard" component={Dashboard} title="Dashboard" />
-      <Drawer.Screen name="About" component={About} title="About" />
+      <Drawer.Screen name="Inbox" component={Inbox} title="Inbox" />
       <Drawer.Screen name="Profile" component={Profile} title="Profile" />
       <Drawer.Screen name="Payment Record" component={Payment} title="Payment Record" />
       <Drawer.Screen name="Available Balance" component={Balance} title="Available Balance" />
