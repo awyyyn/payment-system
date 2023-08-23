@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import React, { useEffect } from 'react'
 import { useAuth } from '@clerk/clerk-expo'
 import styles from '../styles'
+import LoadingUI from './components/LoadingUI'
 
 export default function Logout() {
 
@@ -13,8 +14,6 @@ export default function Logout() {
     
 
     return (
-        <View style={styles.loadingUI}>
-            <Text>Logging out.</Text>
-        </View>
+        <LoadingUI />
     )
 }

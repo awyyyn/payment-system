@@ -83,11 +83,13 @@ export default styles = StyleSheet.create({
         alignSelf: 'center',
         // backgroundColor: 'red',
         lineHeight: 25,
+        width: Dimensions.get('window').width - 50,
+        fontSize: Dimensions.get('window').fontScale = 16,
         color: '#0d3506CC'
         
     },
     title: {
-        fontSize: 30,
+        fontSize: Dimensions.get('window').fontScale = 35,
         padding: 0,
         marginLeft: -10,
         fontWeight: 'bold', 
@@ -110,8 +112,8 @@ export default styles = StyleSheet.create({
     },
     tableHeaderText: {
         textAlign: 'center',
-        fontWeight :'bold',
-        fontSize: 15,
+        fontWeight :'bold', 
+        fontSize: Dimensions.get('window').fontScale
     },
     borderLeft: {
         borderLeftWidth: 1,
@@ -133,5 +135,8 @@ export default styles = StyleSheet.create({
     },
     recordText: {
         textAlign: 'center',  
+    },
+    tableHeader: {
+        fontSize: Dimensions.get('window').fontScale = 30
     }
 })

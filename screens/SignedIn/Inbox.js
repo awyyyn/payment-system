@@ -6,7 +6,7 @@ import { UserContext } from "../../contexts/ProviderContext";
 import styles from "../styles";
 import Ionic from 'react-native-vector-icons/Ionicons'
 import { Dialog } from "./components";
-
+import { StatusBar } from "expo-status-bar";
 
  
 export default function About() {
@@ -26,7 +26,7 @@ export default function About() {
     useEffect(() => {
         async function getMessageData() { 
             const { data, error } = await supabase.from('sms_notifications_table').select(`*, client_id!inner(email)`).filter('client_id.email', 'eq', `${user.email}`)
-            setData(data);    
+            setData(data.reverse());    
             setLoading(false);  
         } 
         getMessageData();  
@@ -70,6 +70,7 @@ export default function About() {
   
     return (
         <ScrollView contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 10}}>
+            <StatusBar backgroundColor='#ffde59' />
             {loading ?  
                 ['1', '2', '3', '4', '5'].map((_, i) => (
                     <Skeleton animation="pulse" key={i} height={50} style={{marginVertical: 10}} />

@@ -21,6 +21,7 @@ import Balance from "./screens/SignedIn/Balance";
 import Logout from "./screens/SignedIn/Logout";
 import { LoadingSpinner } from "./screens/SignedIn/components";
 import { Skeleton } from "@rneui/themed";
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -91,8 +92,9 @@ export default function App() {
  
 const DrawerNavigation = () => { 
 
-  const { user } = React.useContext(UserContext); 
-  
+  const navigation = useNavigation();
+  const { user } = React.useContext(UserContext);  
+
   return (
     <Drawer.Navigator initialRouteName="Home" 
       detachInactiveScreens
@@ -103,7 +105,7 @@ const DrawerNavigation = () => {
           backgroundColor: '#ffde59'
         },
         headerRight: () => (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             <Image 
               source={{uri: user.imageUrl ? user.imageUrl : 'https://png.pngtree.com/png-clipart/20210915/ourmid/pngtree-user-avatar-placeholder-white-blue-png-image_3918443.jpg'  }}  
               style={{height: 35, width: 35, borderRadius: 100, marginRight: 10}}  
@@ -116,7 +118,7 @@ const DrawerNavigation = () => {
       <Drawer.Screen name="Inbox" component={Inbox} title="Inbox" />
       <Drawer.Screen name="Profile" component={Profile} title="Profile" />
       <Drawer.Screen name="Payment Record" component={Payment} title="Payment Record" />
-      <Drawer.Screen name="Available Balance" component={Balance} title="Available Balance" />
+      <Drawer.Screen name="Principal" component={Balance} title="Principal" />
       <Drawer.Screen 
         name="Logout" 
         component={Logout} 

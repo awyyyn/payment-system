@@ -1,5 +1,5 @@
 import { ScrollView, View } from 'react-native' 
-
+// import { StatusBar } from 'expo-status-bar'
 import { useContext } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { Image, Text } from '@rneui/themed'
@@ -14,6 +14,7 @@ export default function Profile() {
 
     return (
         <ScrollView contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 10}}>
+            <StatusBar backgroundColor='#ffde59' />
             <View style={{alignItems: 'center'}}> 
                 <Image source={{uri: user.imageUrl}} style={{width: 150, height: 150, borderRadius: 100}} alt='Profile Image' />
                 <View style={{ minWidth: 280, marginTop: 40, rowGap: 20 }}> 
