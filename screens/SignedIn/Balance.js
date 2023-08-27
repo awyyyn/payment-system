@@ -16,7 +16,8 @@ export default function Balance() {
     const email = user.emailAddresses[0].emailAddress 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [loan, setLoan] = useState("")
+    const [loan, setLoan] = useState("");
+    const [balance, setBalance] = useState(0);
 
     useEffect(() => {
         async function getPaymentRecord() {
@@ -26,7 +27,12 @@ export default function Balance() {
             setLoan(loan?.id ? loan : 0)
             // setLoan(0)
             const payments = data?.payments_table.filter(payment => payment.loan == loan.id);
-            const arrPayments = payments.sort((a, b) => a.id - b.id)
+            const arrPayments = payments.sort((a, b) => a.id - b.id); 
+            const h = arrPayments.filter(i => i.is_paid == false)
+            console.log(arrPayments.filter(i => i.is_paid == false).length)
+            setBalance(h.reduce((x, y) => {
+                return y.amount + x
+            }, 0)) 
             setData(arrPayments)
             setLoading(false) 
         }
@@ -36,63 +42,31 @@ export default function Balance() {
     console.log(data.length)
 
     return (
-        <ScrollView contentContainerStyle={[{paddingVertical: 50,}]}> 
-            <StatusBar backgroundColor='#ffde59' />
-                {/* <View style={styles.between}>
-                    {loading ? <Skeleton animation='pulse' height={40} /> :
-                        <Text style={{fontSize: 16}}>
-                            Amount Loan: <Text style={{fontWeight: '900'}}>₱ {loan}</Text>
-                        </Text>
-                    }
-                </View> */} 
-
-                {loading ?  
-                    <View style={{ marginTop: '65%', justifyContent: 'center', alignItems: 'center'}}>
-                        <ActivityIndicator color='#ffde59' size={50} />
-                    </View>
-                    :
-                    loan == 0 ? <>
-                        <View style={{marginTop: 25, alignSelf: 'center'}}>
-                            <Image source={{uri: 'https://cdn.icon-icons.com/icons2/2483/PNG/512/empty_data_icon_149938.png'}} 
-                                style={{height: 300, width: 300, }}
-                            />
-                            <Text style={{fontSize: 20, textAlign: 'center', color: 'gray'}}>No Active Loan</Text>
-                        </View>
-                    </> : 
-                    <Table style={{backgroundColor: 'transparent'}}>
-                        <Section 
-                            header={`₱ ${loan.amount_loan}`} 
-                            headerStyle={[inlineStyle.headerText, {color: '#000000'}]}
-                            footer=''
-                        > 
-                            {data.map(d => ( 
-                                <StaticCell 
-                                    key={d.id} 
-                                    title={d.date} 
-                                    accessoryComponent={d.is_paid ? 
-                                        <Icon name="checkmark" color="green" style={{fontWeight: 'bold'}} size={32} /> :
-                                        <Icon name="close" color={'red'} size={32} />
-                                    } 
-                                    subtitle={`₱ ${d.amount}`}
-                                />
-                            ))}
-                        </Section>
-                    </Table>
-                }
-
-                
-                {/* {
-                    data.map(p => (
-                        <TableRow amount={p.amount} date={p.date} status={p.is_paid ? 'Paid' : '...'} key={p.id} />
-                    ))
-                } */} 
-        </ScrollView>
+         <View style={inlineStyle.container}>
+            <View style={[{marginBottom: 100, minWidth: '50%', width: '50%'}]}>
+                <Text 
+                    style={{
+                        fontSize: 20, 
+                        textAlign: 'center', 
+                        paddingVertical: 10, 
+                        paddingHorizontal: 5
+                    }}
+                >
+                    As of now your remaining balance:
+                </Text> 
+                <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 30}}>₱ {balance}</Text>
+            </View>
+         </View>
     )
 }
 
 const inlineStyle = StyleSheet.create({
-    headerText: {
-        fontSize: Dimensions.get('window').fontScale = 25
-    }
+    container: {
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
 
 })

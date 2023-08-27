@@ -29,7 +29,7 @@ export default function Payment() {
             // setLoan(loan)
             // const payments = data?.payments_table?.filter(payment => payment.loan == loan.id);
             // const arrPayments = payments.sort((a, b) => a.id - b.id)
-            setData(data);
+            setData(data.sort((x, y) => y.id - x.id));
             setLoading(false) 
         }
         getPaymentRecord();
