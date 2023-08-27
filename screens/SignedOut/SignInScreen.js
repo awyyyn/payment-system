@@ -7,10 +7,12 @@ import styles from "../styles/index";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { StatusBar } from 'expo-status-bar'; 
 import { Header, TextInput, Button } from "./components";
-import supabase from '../../lib/supabaseConfig'
+import supabase from '../../lib/supabaseConfig';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 export default function SignInScreen({navigation}) {
-
+  const opacity = useSharedValue(0);
+  const right = useSharedValue(5)
   
   const { signIn, setActive, isLoaded } = useSignIn();
   const { isSignedIn } = useAuth();
@@ -26,7 +28,9 @@ export default function SignInScreen({navigation}) {
   const [password, setPassword] = useState("");
   const [emailErr, setEmailErr] = useState("");
   const [showPass, setShowPass] = useState(true);
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false)
+  const [errr, setErrr] = useState("")
   
   const emailRegEx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
   
@@ -59,17 +63,27 @@ export default function SignInScreen({navigation}) {
       await setActive({ session: completeSignIn.createdSessionId }); 
     } catch (err) {
       const error = JSON.stringify(err)
-      // 
-      alert(error);
-
-      // password_incorrect
-      // not_found
+      //   
+      setDisabled(true)
+      setErrr("Invalid Credentials"); 
+      opacity.value 
+      right.value = withSpring(right.value + 30)
+      opacity.value = withSpring(opacity.value + 1)
+      setTimeout(() => {
+        right.value = withSpring(right.value - 50)
+        opacity.value = withSpring(opacity.value - 1)
+        setDisabled(false)
+      }, 3000) 
  
     }
 
     setIsLoading(false)
   };
- 
+  
+  const animated = useAnimatedStyle(() => ({ 
+    right: right.value,
+    opacity: opacity.value,
+  }));
 
   return (
     <>
@@ -77,6 +91,20 @@ export default function SignInScreen({navigation}) {
       <SafeAreaView>
         <TouchableWithoutFeedback  onPress={() => Keyboard.dismiss()}>
           <View style={[styles.signedOutContainer, styles.bgYellow]}> 
+            <Animated.View 
+              style={[{
+                backgroundColor: 'red',
+                minWidth: 200,
+                borderRadius: 20,
+                paddingHorizontal: 5,
+                paddingVertical: 5,
+                position: 'absolute',
+                right: 20,
+                top: 30,
+              }, animated]}
+            >
+              <Text style={{color: '#FFF', fontSize: 20, paddingHorizontal: 10}}>{errr ? errr : 'Err'}</Text>
+            </Animated.View>
             <Header title="Login" subtitle="Sign in to continue" />
             <View style={{rowGap: -10, marginTop: 30}}>
               <View> 
@@ -117,8 +145,9 @@ export default function SignInScreen({navigation}) {
                 <Button 
                   isLoading={isLoading} 
                   title="Log in"    
-                  isError={!password || emailErr ? true : false} 
-                  handleFunction={onSignInPress}   
+                  isError={!password || emailErr || disabled ? true : false} 
+                  handleFunction={onSignInPress}  
+
                 />
                 <TouchableOpacity onPress={() => navigation.navigate('SignUp')} >
                   <Text style={[styles.textCenter, styles.uppercase, {marginBottom: 5, color: '#524406'}]}>

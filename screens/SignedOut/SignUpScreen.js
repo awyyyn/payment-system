@@ -14,9 +14,7 @@ export default function SignUpScreen({navigation}) {
    
 
   const emailRegEx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-
-  // const [emailAddress, setEmailAddress] = React.useState("");
-  // const [password, setPassword] = React.useState(""); 
+ 
   const [code, setCode] = React.useState("");
   const [codeErr, setCodeErr] = React.useState(false);
   const [showPass, setShowPass] = useState(true)
