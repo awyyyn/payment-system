@@ -8,7 +8,8 @@ export default function CustomInput({
     disabled,
     customStyles,
     label,
-    handleChange
+    handleChange,
+    errorMessage
 }) {
 
     return (
@@ -29,7 +30,9 @@ export default function CustomInput({
             }}
             inputContainerStyle={{borderBottomWidth: 0}}
             inputStyle={[styles.input, customStyles]}
+            errorMessage={errorMessage && errorMessage}
             style={{borderWidth: 0}}
+            maxLength={label.toLowerCase().includes("contact") ? 11 : 30}
             containerStyle={[{width: 'auto'}, styles.inputContainer]}
             disabled={disabled}
         />  

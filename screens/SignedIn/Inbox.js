@@ -7,11 +7,12 @@ import styles from "../styles";
 import Ionic from 'react-native-vector-icons/Ionicons'
 import { Dialog } from "./components";
 import { StatusBar } from "expo-status-bar";
+import { RefreshControl } from "react-native-gesture-handler";
 
  
 export default function About() {
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); 
     const [data, setData] = useState([]);
     const [update, setUpdate] = useState(data)
     const { user } = useContext(UserContext);
@@ -23,7 +24,9 @@ export default function About() {
         buttonTitle: "", 
     })
   
-    async function getMessageData() { 
+    const getMessageData = useCallback(async () =>  { 
+
+        setLoading(true)
         const { data, error } = await supabase.from('sms_notifications_table').select(`*`).eq('client_id',  `${user.id}`)
         console.log(data)
         if(data == null) {
@@ -32,7 +35,7 @@ export default function About() {
         }
         setData(data?.reverse());    
         setLoading(false);  
-    } 
+    }, [])
 
     useEffect(() => {
         getMessageData();  
@@ -42,22 +45,22 @@ export default function About() {
 
         console.log(id, 'inside')
         const subscription = supabase.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'sms_notifications_table'}, (payload => {
-            console.log("PAYLOAD", payload)   
             if(payload.eventType === "UPDATE"){  
                 if(payload.new.client_id === user.id){ 
-                    if(id){
-                        setData(prev => { 
-                            const old = prev.filter(data => data.id !== id);
-                            setId("")
-                            console.log(old.id) 
-                            return [...old, payload.new]
-                        }); 
-                    }else{
-                        setData(prev => { 
-                            const old = prev.filter(data => data.created_at !== payload.new.created_at); 
-                            return [...old, payload.new]
-                        }); 
-                    }
+                    getMessageData()
+                    // if(id){
+                    //     setData(prev => { 
+                    //         const old = prev.filter(data => data.id !== id);
+                    //         setId("")
+                    //         console.log(old.id) 
+                    //         return [...old, payload.new]
+                    //     }); 
+                    // }else{
+                    //     setData(prev => { 
+                    //         const old = prev.filter(data => data.created_at !== payload.new.created_at); 
+                    //         return [...old, payload.new]
+                    //     }); 
+                    // }
                 }
             }
 
@@ -79,14 +82,19 @@ export default function About() {
  
   
     return (
-        <ScrollView contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 10}}>
+        <ScrollView 
+            contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 10}}
+            refreshControl={
+                <RefreshControl refreshing={loading} onRefresh={getMessageData} />
+            }    
+        >
             <StatusBar backgroundColor='#ffde59' />
             {loading ?  
                 ['1', '2', '3', '4', '5'].map((_, i) => (
                     <Skeleton animation="pulse" key={i} height={50} style={{marginVertical: 10}} />
                 ))
                 :
-                data?.length == 0 ? 
+                data?.length < 1 ? 
                     <>
                         <View style={{alignSelf: 'center'}}>
                             <Icon name="inbox" size={150} color="#cbae3b"  />

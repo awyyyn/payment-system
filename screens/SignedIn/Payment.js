@@ -1,5 +1,5 @@
 import { View, ScrollView, Dimensions, StyleSheet, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styles from '../styles'
 import { Skeleton, Text, Image } from '@rneui/themed' 
 import supabase from '../../lib/supabaseConfig'
@@ -8,6 +8,7 @@ import Table, { Section, BioCell, StaticCell, TouchableCell } from 'react-native
 import LoadingUI from './components/LoadingUI';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { StatusBar } from 'expo-status-bar'
+import { RefreshControl } from 'react-native-gesture-handler'
 
 export default function Payment() {
  
@@ -15,9 +16,10 @@ export default function Payment() {
     const email = user.emailAddresses[0].emailAddress 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refresing, setRefresing] = useState(false);
     const [loan, setLoan] = useState("")
     
-    async function getPaymentRecord() {
+    const getPaymentRecord = useCallback(async() => {
         setLoading(true) 
         const { data: udata } = await supabase.from('clients_table').select('uuid').eq('email', email).single(); 
         const { data, error } = await supabase.from('loans_table').select(`*, payments_table(*)`).eq('client_id', udata.uuid)
@@ -27,7 +29,7 @@ export default function Payment() {
 
         setData(data.sort((x, y) => y.id - x.id));
         setLoading(false) 
-    }
+    }, [])
     
     useEffect(() => {
         getPaymentRecord();
@@ -36,10 +38,8 @@ export default function Payment() {
     useEffect(() => {
         const subscribe = supabase
             .channel('any')
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'payments_table'}, (payload => {
-                getPaymentRecord(); 
-                console.log(payload)
-            }))
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'payments_table'}, (payload => getPaymentRecord()))
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'loans_table'}, (payload => getPaymentRecord()))
             .subscribe()
         
         return () => subscribe.unsubscribe();
@@ -49,7 +49,12 @@ export default function Payment() {
    
 
     return (
-        <ScrollView contentContainerStyle={[{paddingVertical: 25,}]}> 
+        <ScrollView 
+            contentContainerStyle={[{paddingVertical: 25,}]}
+            refreshControl={
+                <RefreshControl refreshing={refresing} onRefresh={getPaymentRecord} />
+            }    
+        > 
                 {/* <View style={styles.between}>
                     {loading ? <Skeleton animation='pulse' height={40} /> :
                         <Text style={{fontSize: 16}}>

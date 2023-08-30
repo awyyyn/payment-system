@@ -1,13 +1,15 @@
 import { View, ScrollView, Dimensions, StyleSheet, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import styles from '../styles'
 import { Image, Skeleton, Text } from '@rneui/themed' 
 import supabase from '../../lib/supabaseConfig'
 import { useAuth, useUser } from '@clerk/clerk-expo' 
 import Table, { Section, BioCell, StaticCell, TouchableCell } from 'react-native-js-tableview';
 import LoadingUI from './components/LoadingUI';
-import Icon from 'react-native-vector-icons/Ionicons'
-import { StatusBar } from 'expo-status-bar'
+import Icon from 'react-native-vector-icons/Ionicons';
+import { StatusBar } from 'expo-status-bar';
+import { RefreshControl } from 'react-native-gesture-handler'
+    
 
 
 export default function Balance() {
@@ -19,7 +21,7 @@ export default function Balance() {
     const [loan, setLoan] = useState("");
     const [balance, setBalance] = useState(0);
  
-    async function getPaymentRecord() {
+    const getPaymentRecord = useCallback(async () =>  {
         setLoading(true) 
         const { data, error } = await supabase.from('clients_table').select(`payments_table(*), loans_table(*)`).eq('email', email).single()
         if(error) return alert('Network Error') 
@@ -41,7 +43,7 @@ export default function Balance() {
         }, 0)) 
         setData(arrPayments)
         setLoading(false) 
-    }
+    }, [])
 
     useEffect(() => { 
         getPaymentRecord();
@@ -61,6 +63,11 @@ export default function Balance() {
     console.log(loading)
 
     return (
+        <ScrollView
+            refreshControl={
+                <RefreshControl refreshing={loading} onRefresh={getPaymentRecord} />
+            }
+        >
          <View style={inlineStyle.container}>
             <View style={[{marginBottom: 100, minWidth: '50%', width: '50%', elevation: 10}]}>
                 {loading ? 
@@ -96,6 +103,7 @@ export default function Balance() {
                 }
             </View>
          </View>
+        </ScrollView>
     )
 }
 

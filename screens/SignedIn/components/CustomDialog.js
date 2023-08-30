@@ -13,7 +13,7 @@ export default function CustomDialog({
     return (
         <Dialog isVisible={isShow} onDismiss={handleClose}>
             <Dialog.Title title={title} />
-            <Text>{message}</Text>
+            <Text style={{lineHeight: 25, letterSpacing: 1}}>{message}</Text>
             <Dialog.Actions>
                 <Dialog.Button title={buttonTitle} onPress={handleBtn1} />
             </Dialog.Actions>

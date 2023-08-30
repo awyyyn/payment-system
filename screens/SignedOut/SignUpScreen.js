@@ -163,7 +163,6 @@ export default function SignUpScreen({navigation}) {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
-      await setActive({ session: completeSignUp.createdSessionId });  
       await supabase.from("clients_table").insert({
         first_name: formData.firstName,
         last_name: formData.lastName,
@@ -172,6 +171,7 @@ export default function SignUpScreen({navigation}) {
         email: formData.emailAddress, 
         contact: formData.phoneNumber
       })
+      await setActive({ session: completeSignUp.createdSessionId });  
       setVerifying(false);
     } catch (err) {
       setCodeErr(String(err.errors[0].longMessage));
