@@ -19,41 +19,46 @@ export default function Balance() {
     const [loan, setLoan] = useState("");
     const [balance, setBalance] = useState(0);
  
-    useEffect(() => {
-
-        async function getPaymentRecord() {
-            setLoading(true) 
-            const { data, error } = await supabase.from('clients_table').select(`payments_table(*), loans_table(*)`).eq('email', email).single()
-            if(error) return alert('Network Error') 
-            if(data?.loans_table.filter(loan => loan.is_paid == false).length){
-                setBalance(0)
-                return 
-            }
-            const loan = data?.loans_table.filter(loan => loan.is_paid == false).pop(); 
-            setLoan(loan?.id ? loan : 0)
-            // setLoan(0)
-            const payments = data?.payments_table.filter(payment => payment?.loan == loan?.id);
-            const arrPayments = payments.sort((a, b) => a.id - b.id); 
-            const h = arrPayments.filter(i => i.is_paid == false)
-            console.log(arrPayments.filter(i => i.is_paid == false).length)
-            setBalance(h.reduce((x, y) => {
-                return y.amount + x
-            }, 0)) 
-            setData(arrPayments)
+    async function getPaymentRecord() {
+        setLoading(true) 
+        const { data, error } = await supabase.from('clients_table').select(`payments_table(*), loans_table(*)`).eq('email', email).single()
+        if(error) return alert('Network Error') 
+        // console.log(data?.loans_table.filter(loan => loan.is_paid == false).length, 'LENGT')
+        if(data?.loans_table.filter(loan => loan.is_paid == false).length == 0){
             setLoading(false) 
+            setBalance(0)
+            return 
         }
+        const loan = data?.loans_table.filter(loan => loan.is_paid == false).pop(); 
+        setLoan(loan?.id ? loan : 0)
+        // setLoan(0)
+        const payments = data?.payments_table.filter(payment => payment?.loan == loan?.id);
+        const arrPayments = payments.sort((a, b) => a.id - b.id); 
+        const h = arrPayments.filter(i => i.is_paid == false)
+        console.log(arrPayments.filter(i => i.is_paid == false).length)
+        setBalance(h.reduce((x, y) => {
+            return y.amount + x
+        }, 0)) 
+        setData(arrPayments)
+        setLoading(false) 
+    }
 
+    useEffect(() => { 
         getPaymentRecord();
+    }, [])
+
+    useEffect(() => { 
         
-        const subscribe = supabase.channel('any').on('postgres_changes', {event: '*', schema: 'public', table: 'payments_table'}, (payload => {
-            getPaymentRecord();
-        })).subscribe();
+        const subscribe = supabase.channel('any')
+            .on('postgres_changes', {event: '*', schema: 'public', table: 'payments_table'}, (payload => getPaymentRecord()))
+            .on('postgres_changes', {event: '*', schema: 'public', table: 'loans_table'}, (payload => getPaymentRecord()))
+            .subscribe();
 
         return () => subscribe.unsubscribe();
             
     }, [])
-
-    console.log(data.length)
+ 
+    console.log(loading)
 
     return (
          <View style={inlineStyle.container}>

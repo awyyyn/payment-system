@@ -32,6 +32,7 @@ export default function Dashboard ({navigation}){
         email: data?.email,
         firstName: data?.first_name,
         lastName: data?.last_name,
+        middleName: data?.middle_name,
         phoneNumber: data?.contact,
         address: data?.address,
         imageUrl: user?.user.imageUrl,

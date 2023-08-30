@@ -7,7 +7,8 @@ export default function CustomInput({
     value,
     disabled,
     customStyles,
-    label
+    label,
+    handleChange
 }) {
 
     return (
@@ -15,6 +16,17 @@ export default function CustomInput({
             label={label}
             labelStyle={styles.labelStyle}
             value={value}
+            onChangeText={(text) => {
+                if(value.slice(0, 2) == '09'){
+                    if(value.length == 2){
+
+                    }else{
+                        handleChange(text)
+                    }
+                }else{
+                    handleChange(text)
+                }
+            }}
             inputContainerStyle={{borderBottomWidth: 0}}
             inputStyle={[styles.input, customStyles]}
             style={{borderWidth: 0}}

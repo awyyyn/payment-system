@@ -1,6 +1,6 @@
 import { View, ScrollView, TouchableOpacity, Pressable } from "react-native";
 import { Icon, Skeleton, Text } from "@rneui/themed"; 
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import supabase from "../../lib/supabaseConfig";
 import { UserContext } from "../../contexts/ProviderContext";
 import styles from "../styles";
@@ -25,10 +25,15 @@ export default function About() {
   
     async function getMessageData() { 
         const { data, error } = await supabase.from('sms_notifications_table').select(`*`).eq('client_id',  `${user.id}`)
-        console.log(data) 
-        setData(data.reverse());    
+        console.log(data)
+        if(data == null) {
+            setData(data)
+            return setLoading(false)
+        }
+        setData(data?.reverse());    
         setLoading(false);  
     } 
+
     useEffect(() => {
         getMessageData();  
     }, []);
