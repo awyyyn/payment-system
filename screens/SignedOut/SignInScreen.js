@@ -87,7 +87,7 @@ export default function SignInScreen({navigation}) {
 
   return (
     <>
-      <StatusBar animated translucent style="auto" />
+      <StatusBar backgroundColor='#ffde59'  />
       <SafeAreaView>
         <TouchableWithoutFeedback  onPress={() => Keyboard.dismiss()}>
           <View style={[styles.signedOutContainer, styles.bgYellow]}> 
@@ -149,7 +149,13 @@ export default function SignInScreen({navigation}) {
                   handleFunction={onSignInPress}  
 
                 />
-                <TouchableOpacity onPress={() => navigation.navigate('SignUp')} >
+                <TouchableOpacity 
+                  onPress={() => {
+                    setEmailAddress('')
+                    setPassword("")
+                    navigation.navigate('SignUp')
+                  }} 
+                >
                   <Text style={[styles.textCenter, styles.uppercase, {marginBottom: 5, color: '#524406'}]}>
                     Don't have an account yet? 
                   </Text>

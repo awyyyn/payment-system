@@ -262,6 +262,7 @@ export default function SignUpScreen({navigation}) {
                         disabled={isLoading}  
                         inputStyle={{borderBottomWidth: 0}}
                         style={styles.input}
+                        placeholder="Ligao City"
                         label="Address"
                         errorMessage={formError.address}
                         errorStyle={formError.address && {marginBottom: 20}}
@@ -271,8 +272,7 @@ export default function SignUpScreen({navigation}) {
                         handleChange={(value) => {
                           setFormData((data) => ({...data, address: value}))
                           addressValidaiton()
-                        }}
-                        placeholder=""
+                        }} 
                         // errorStyle={emailErr && {marginBottom: 20}}
                       />
                       {/* <TextInput 
@@ -326,7 +326,7 @@ export default function SignUpScreen({navigation}) {
                           setFormData((data) => ({...data, password: value}));
                           passValidation()
                         }}
-                        placeholder=""
+                        placeholder="********"
                         rightIcon={{type: 'material-community', name: `${showPass ? 'eye-off' : 'eye-outline'}`, onPress: () => setShowPass(prev => !prev) }}
 
                         // errorStyle={emailErr && {marginBottom: 20}}
@@ -339,7 +339,21 @@ export default function SignUpScreen({navigation}) {
                         isError={isButtonDisabled}
                         handleFunction={handleSignUp}     
                       />
-                      <TouchableOpacity onPress={() => navigation.navigate('SignIn')} >
+                      <TouchableOpacity 
+                        onPress={() => {
+                          setFormData({
+                            firstName: "",
+                            middleName: "",
+                            lastName: "",
+                            username: "",
+                            phoneNumber: "",
+                            emailAddress: "",
+                            password: "",
+                            address: ""
+                          })
+                          navigation.navigate('SignIn')
+                        }} 
+                      >
                         <Text style={styles.link}>
                           Already have an account? Sign in 
                         </Text>

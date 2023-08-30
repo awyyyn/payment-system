@@ -17,25 +17,36 @@ export default function Payment() {
     const [loading, setLoading] = useState(true);
     const [loan, setLoan] = useState("")
     
-    useEffect(() => {
-        async function getPaymentRecord() {
-            const { data: udata } = await supabase.from('clients_table').select('uuid').eq('email', email).single(); 
-            const { data, error } = await supabase.from('loans_table').select(`*, payments_table(*)`).eq('client_id', udata.uuid)
-            console.log(user.id)
-            if(error) return alert(error.message)
-  
+    async function getPaymentRecord() {
+        setLoading(true) 
+        const { data: udata } = await supabase.from('clients_table').select('uuid').eq('email', email).single(); 
+        const { data, error } = await supabase.from('loans_table').select(`*, payments_table(*)`).eq('client_id', udata.uuid)
+        console.log(user.id)
+        setLoan(udata.uuid)
+        if(error) return alert(error.message)
 
-            // const loan = data?.loans_table?.filter(loan => loan.is_paid == false).pop();
-            // setLoan(loan)
-            // const payments = data?.payments_table?.filter(payment => payment.loan == loan.id);
-            // const arrPayments = payments.sort((a, b) => a.id - b.id)
-            setData(data.sort((x, y) => y.id - x.id));
-            setLoading(false) 
-        }
+        setData(data.sort((x, y) => y.id - x.id));
+        setLoading(false) 
+    }
+    
+    useEffect(() => {
         getPaymentRecord();
-    }, []) 
-  
-    console.log(data.length)
+    }, []);
+
+    useEffect(() => {
+        const subscribe = supabase
+            .channel('any')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'payments_table'}, (payload => {
+                getPaymentRecord(); 
+                console.log(payload)
+            }))
+            .subscribe()
+        
+        return () => subscribe.unsubscribe();
+    }, [])
+
+
+   
 
     return (
         <ScrollView contentContainerStyle={[{paddingVertical: 25,}]}> 
@@ -62,22 +73,39 @@ export default function Payment() {
                         </View>
                     </> :
                     <Table style={{backgroundColor: 'transparent'}}>
-                        {data.map((a) => {
+                        {data.map((a, key) => {
 
                                 console.log(a)
+                                console.log(key, "key")
 
                             return (
                                 <Section 
-                                    key={a.id}
-                                    header={`Amount Loan: ${a.amount_loan}`}
+                                    key={key}
+                                    
+                                    headerComponent={ 
+                                        <View key={key} style={{padding: 10, display: 'flex', rowGap: 5, borderBottomWidth: 1, borderColor: '#00000030'}}>
+                                            <View style={{display: 'flex', flexDirection: 'row', justifyContent: "space-between"}}>
+                                                <Text style={{fontSize: 20, fontWeight: 'bold'}}>Loan Amount:</Text>
+                                                <Text style={{fontSize: 20, fontWeight: 'bold'}}>₱ {a.amount_loan}</Text>
+                                            </View>
+                                            <View style={{display: 'flex', flexDirection: 'row', justifyContent: "space-between"}}>
+                                                <Text style={{fontSize: 16, fontWeight: '600'}}>Interest (19%):</Text>
+                                                <Text style={{fontSize: 16, fontWeight: '600'}}>₱ {Number(a.amount_loan)  * 0.19}</Text>
+                                            </View>
+                                            <View style={{display: 'flex', flexDirection: 'row', justifyContent: "space-between"}}>
+                                                <Text style={{fontSize: 16, fontWeight: '600'}}>Total Amount:</Text>
+                                                <Text style={{fontSize: 16, fontWeight: '600'}}>₱ {a.total_amount}</Text>
+                                            </View> 
+                                        </View> 
+                                    }
                                     mode='inset-grouped'
                                     headerStyle={[inlineStyle.headerText, {color: 'orange'}]}
                                     // separatorInsetRight={2}
                                     separatorInsetRight={20}
                                     separatorInsetLeft={20}
                                 >    
-                                    {a.payments_table.sort((a, b) => a.num - b.num).map(d => ( 
-                                        <StaticCell key={d.id} title={d.date} accessoryComponent={d.is_paid ? <Icon name="checkmark" color="green" style={{fontWeight: 'bold'}} size={32} /> : <Icon name="close" color={'red'} size={32} />}  
+                                    {a.payments_table.sort((a, b) => a.num - b.num).map((d, z) => ( 
+                                        <StaticCell key={z} title={d.date} accessoryComponent={d.is_paid ? <Icon name="checkmark" color="green" style={{fontWeight: 'bold'}} size={32} /> : <Icon name="close" color={'red'} size={32} />}  
                                             // customActionTrigger='onPress'
                                             // customActionType='compose'
                                             // onAccessoryPress={() => {}}

@@ -6,16 +6,22 @@ import { Image, Text } from '@rneui/themed'
 import styles from '../styles'
 import { UserContext } from '../../contexts/ProviderContext';
 import { Input } from './components'
+import { Button } from 'react-native-elements'
+import client from '@clerk/clerk-expo'
 
 export default function Profile() {
 
-    const { user, setUser } = useContext(UserContext);
-    console.log(user)
+    const { user, setUser } = useContext(UserContext); 
+    
+    const ss = async() => {
+        // const data = await client
+    }
+    
 
     return (
         <ScrollView contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 10}}>
             <StatusBar backgroundColor='#ffde59' />
-            <View style={{alignItems: 'center'}}> 
+            <View style={{alignItems: 'center', display: 'flex', flexDirection: 'column', alignContent: "space-between",justifyContent: 'center'}}> 
                 <Image source={{uri: user.imageUrl}} style={{width: 150, height: 150, borderRadius: 100}} alt='Profile Image' />
                 <View style={{ minWidth: 280, marginTop: 40, rowGap: 20 }}> 
                     <Input  
@@ -35,6 +41,9 @@ export default function Profile() {
                         label="Contact #"
                         disabled={true}
                     />
+                </View>
+                <View style={{minWidth: 280}}>
+                    <Button title="Edit" containerStyle={{width: '100'}}  type='outline' />
                 </View>
             </View>
         </ScrollView>

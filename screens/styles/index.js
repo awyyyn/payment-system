@@ -13,7 +13,9 @@ export default styles = StyleSheet.create({
         alignItems: 'center'
     },
     bgYellow: {
-        backgroundColor: '#FFF'
+        // backgroundColor: '#123F3230'
+        // backgroundColor: '#fadd6b99'
+        backgroundColor: "#bdf9ff10"
     },
     row: {
         display: 'flex',

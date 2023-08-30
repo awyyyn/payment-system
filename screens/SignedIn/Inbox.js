@@ -23,12 +23,13 @@ export default function About() {
         buttonTitle: "", 
     })
   
+    async function getMessageData() { 
+        const { data, error } = await supabase.from('sms_notifications_table').select(`*`).eq('client_id',  `${user.id}`)
+        console.log(data) 
+        setData(data.reverse());    
+        setLoading(false);  
+    } 
     useEffect(() => {
-        async function getMessageData() { 
-            const { data, error } = await supabase.from('sms_notifications_table').select(`*, client_id!inner(email)`).filter('client_id.email', 'eq', `${user.email}`)
-            setData(data.reverse());    
-            setLoading(false);  
-        } 
         getMessageData();  
     }, []);
 
@@ -59,6 +60,10 @@ export default function About() {
                 if(payload.new.client_id === user.id ){
                     setData((prev) => ([payload?.new, ...prev]));
                 }
+            }
+
+            if(payload.eventType === "DELETE"){
+                getMessageData()
             }
 
         })).subscribe()

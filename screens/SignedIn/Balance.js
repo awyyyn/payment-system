@@ -18,15 +18,21 @@ export default function Balance() {
     const [loading, setLoading] = useState(true);
     const [loan, setLoan] = useState("");
     const [balance, setBalance] = useState(0);
-
+ 
     useEffect(() => {
+
         async function getPaymentRecord() {
+            setLoading(true) 
             const { data, error } = await supabase.from('clients_table').select(`payments_table(*), loans_table(*)`).eq('email', email).single()
             if(error) return alert('Network Error') 
+            if(data?.loans_table.filter(loan => loan.is_paid == false).length){
+                setBalance(0)
+                return 
+            }
             const loan = data?.loans_table.filter(loan => loan.is_paid == false).pop(); 
             setLoan(loan?.id ? loan : 0)
             // setLoan(0)
-            const payments = data?.payments_table.filter(payment => payment.loan == loan.id);
+            const payments = data?.payments_table.filter(payment => payment?.loan == loan?.id);
             const arrPayments = payments.sort((a, b) => a.id - b.id); 
             const h = arrPayments.filter(i => i.is_paid == false)
             console.log(arrPayments.filter(i => i.is_paid == false).length)
@@ -36,25 +42,53 @@ export default function Balance() {
             setData(arrPayments)
             setLoading(false) 
         }
+
         getPaymentRecord();
-    }, []) 
-  
+        
+        const subscribe = supabase.channel('any').on('postgres_changes', {event: '*', schema: 'public', table: 'payments_table'}, (payload => {
+            getPaymentRecord();
+        })).subscribe();
+
+        return () => subscribe.unsubscribe();
+            
+    }, [])
+
     console.log(data.length)
 
     return (
          <View style={inlineStyle.container}>
-            <View style={[{marginBottom: 100, minWidth: '50%', width: '50%'}]}>
-                <Text 
-                    style={{
-                        fontSize: 20, 
-                        textAlign: 'center', 
-                        paddingVertical: 10, 
-                        paddingHorizontal: 5
-                    }}
-                >
-                    As of now your remaining balance:
-                </Text> 
-                <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 30}}>₱ {balance}</Text>
+            <View style={[{marginBottom: 100, minWidth: '50%', width: '50%', elevation: 10}]}>
+                {loading ? 
+                    <>
+                        <ActivityIndicator color='#f1c91b' size={75} />
+                    </>
+                : !balance ? 
+                <>
+                    <Text
+                        style={{
+                            fontSize: 20, 
+                            textAlign: 'center', 
+                            paddingVertical: 10, 
+                            paddingHorizontal: 5
+                        }}
+                    >
+                        Currently, there are no active loans.
+                    </Text>
+                </>:
+                <>
+                    <Text 
+                        style={{
+                            fontSize: 20, 
+                            textAlign: 'center', 
+                            paddingVertical: 10, 
+                            paddingHorizontal: 5
+                        }}
+                    >
+                        As of now your remaining balance:
+                    </Text> 
+                    <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 30}}>₱ {balance}</Text>
+                </>
+                }
             </View>
          </View>
     )
