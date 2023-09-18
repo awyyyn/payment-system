@@ -14,8 +14,8 @@ export default styles = StyleSheet.create({
     },
     bgYellow: {
         // backgroundColor: '#123F3230'
-        // backgroundColor: '#fadd6b99'
-        backgroundColor: "#bdf9ff10"
+        backgroundColor: '#fadd6b99'
+        // backgroundColor: "#bdf9ff10"
     },
     row: {
         display: 'flex',

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "payment-management-system",
-    "slug": "payment-management-system",
+    "name": "Bicol Amigos",
+    "slug": "bicol-amigos",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.newbeee.paymentmanagementsystem"

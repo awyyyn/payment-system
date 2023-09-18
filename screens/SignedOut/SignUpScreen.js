@@ -184,9 +184,9 @@ export default function SignUpScreen({navigation}) {
 
   return (
     <> 
-      <StatusBar animated translucent style="auto" />
+    <StatusBar backgroundColor='#ffde59'  />
       <SafeAreaView >
-        <ScrollView contentContainerStyle={[{paddingVertical: 75}]}>
+        <ScrollView contentContainerStyle={[{paddingVertical: 75, backgroundColor: "#fadd6b99"}]}>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={[styles.signedOutContainer]}>
 
